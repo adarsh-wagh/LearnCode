@@ -1,11 +1,14 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Hero from "./_components/Hero";
+import Header from "./_components/Header";
 
 export default function Home() {
   return (
-  <div>
-    <h1 className="font-game text-2xl">yefwgf4ewrgdp</h1>
-    <Button>hola</Button>
+  <div className="flex flex-col items-center">
+    <Header />
+
+    <Hero />
   </div>
   );
 }
