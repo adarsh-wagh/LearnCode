@@ -99,19 +99,19 @@ function Header() {
     </NavigationMenuItem>
 
     <NavigationMenuItem>
-         <NavigationMenuLink>
+         <NavigationMenuLink asChild>
         <Link href="/projects">Projects</Link>
         </NavigationMenuLink>
     </NavigationMenuItem>
 
     <NavigationMenuItem>
-        <NavigationMenuLink>
+        <NavigationMenuLink asChild>
         <Link href="/pricing">Pricing</Link>
         </NavigationMenuLink>
     </NavigationMenuItem>
 
     <NavigationMenuItem>
-        <NavigationMenuLink>
+        <NavigationMenuLink asChild>
         <Link href="/contact">Contact Us</Link>
         </NavigationMenuLink>
     </NavigationMenuItem>
