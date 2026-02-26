@@ -27,13 +27,13 @@ const buttonVariants = cva(
       "text-primary underline-offset-4 hover:underline",
 
 pixel:
-  "!rounded-sm inline-flex items-center justify-center \
-   !h-auto !px-4  \
-   !bg-[#f8c800] !text-black !border-black !border-2 \
+  "rounded-sm inline-flex items-center justify-center \
+   h-auto px-4  \
+   bg-[#f8c800] text-black border-black border-1 \
    shadow-[0_4px_0_0_#b89000,0_6px_0_0_#000] \
-   hover:!bg-[#ffd428] \
+   hover:bg-[#ffd428]\
    active:translate-y-[4px] active:shadow-none \
-   transition-all duration-75 !font-bold",
+   transition-all duration-75 font-bold",
   },
   size: {
     default: "h-9 px-4 py-2",
