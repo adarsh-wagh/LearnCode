@@ -1,16 +1,35 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Course } from '../../_components/CourseList'
 import Image from 'next/image'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
+import axios from 'axios'
+import { Loader2Icon } from 'lucide-react'
+import { toast } from 'sonner'
+
 
 type Props={
     loading:boolean,
     courseDetail:Course|undefined,
+    refreshData:() => void,
 }
 
 
-function CourseDetailBanner({loading,courseDetail}:Props) {
+function CourseDetailBanner({loading,courseDetail,refreshData}:Props) {
+
+  const [loading_,setLoading_]=useState(false);
+  const EnrollCourse= async()=>{
+
+     setLoading_(true);
+     const result=await axios.post('/api/enroll-course',{
+      courseID:courseDetail?.courseID
+     })
+     console.log(result);
+     toast.success('Course Enrolled!')
+     refreshData();
+     setLoading_(false);
+  }
+
   return (
     <div>
 
@@ -28,7 +47,12 @@ function CourseDetailBanner({loading,courseDetail}:Props) {
         bg-linear-to-r from-black/80 yo_white-50/50 h-full'>
             <h2 className='text-6xl'>{courseDetail?.title}</h2>
             <p className='text-3xl text-slate-300 mt-3'>{courseDetail?.desc}</p>
-            <Button className='text-2xl mt-7' variant={'pixel'} size={'lg'}>Enroll Now</Button>
+            {!courseDetail?.userEnrolled? <Button className='text-2xl mt-7' variant={'pixel'} size={'lg'}
+            disabled={loading_}
+            onClick={EnrollCourse}>
+              {loading_&&<Loader2Icon className='animate-spin'/>}
+              Enroll Now</Button>
+              :<Button variant={'pixel'} className='text-2xl mt-7' size={'lg'}>Continue Learning...</Button>}
         </div>
 
         </div>
