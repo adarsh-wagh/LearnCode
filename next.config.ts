@@ -1,10 +1,13 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
-  images:{
-    domains:['ik.imagekit.io']
-  }
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  images: {
+    domains: [
+      "ik.imagekit.io",
+      "images.unsplash.com",
+      "cdn.discordapp.com",
+      "your-domain.com"
+    ],
+  },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

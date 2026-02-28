@@ -19,7 +19,7 @@ function EnrolledCourses() {
             <h2 className='font-game text-xl'>You Don't have any enrolled courses</h2>
             
             <Link href={'/courses'}>
-            <Button variant={'pixel'} className='font-game text-lg' size={'lg'}>Browse All Courses</Button>
+            <Button variant={'pixel'} className='font-game text-2xl' size={'lg'}>Browse All Courses</Button>
             </Link>
         </div>
 

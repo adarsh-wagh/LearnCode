@@ -10,7 +10,7 @@ function UpgradeToPro() {
         <h2 className='text-3xl font-game'>Upgrade to pro</h2>
         <p className='font-game text-slate-400 text-xl'>Join Pro membership and gain access to every Courses</p>
         <Link href={'/pricing'}>
-        <Button variant={'pixel'} className='font-game w-full' size={'lg'}>Upgrade</Button>
+        <Button variant={'pixel'} className='font-game w-full text-2xl' size={'lg'}>Upgrade</Button>
         </Link>
     </div>
   )

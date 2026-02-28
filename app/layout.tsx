@@ -5,6 +5,7 @@ import Provider from "./provider";
 import {
   ClerkProvider,
 } from '@clerk/nextjs'
+import { TooltipProvider } from "@/components/ui/tooltip"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,9 +55,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <TooltipProvider>
+            {children}
+          </TooltipProvider>
         </Provider>
-        
       </body>
     </html> 
     </ClerkProvider>
