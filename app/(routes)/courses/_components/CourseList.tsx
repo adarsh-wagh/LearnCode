@@ -1,17 +1,35 @@
 "use client"
 import axios from "axios";
-import { ChartNoAxesColumnIncreasingIcon } from "lucide-react";
+import { ChartNoAxesColumnIncreasingIcon} from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import React, { useEffect, useState } from 'react'
 
-type Course={
+export type Course={
     id:number,
-    courseId:number,
+    courseID:number,
     title:string,
     desc:string,
     level:string,
     bannerImage:string,
     tag:string,
+    chapters:Chapter[]
+}
+
+export type Chapter={
+    chapterId:number,
+    courseID:number,
+    desc:string,
+    name:string,
+    id:number,
+    exercises:exercises[]
+}
+
+export type exercises={
+    name:string,
+    slug:string,
+    xp:number,
+    difficulty:string,
 }
 
 function CourseList() {
@@ -25,7 +43,7 @@ function CourseList() {
     const GetAllCourses=async()=>{
         setLoading(true)
         const result=await axios.get('/api/course')
-        console.log(result);
+        console.log(result.data);
         setCourseList(result?.data);
         setLoading(false);
     }
@@ -34,11 +52,19 @@ function CourseList() {
     <div className="grid grid-col-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5 mt-3">
         {courseList?.map((course,index)=>(
 
-            <div key={index} className="border-2 rounded-xl hover:bg-slate-900 cursor-pointer">
+            <Link href={'/courses/'+course?.courseID} key={index} >
 
-                <Image src={(course?.bannerImage).trimEnd()} width={400} height={400}
+            <div className="border-2 rounded-xl hover:bg-slate-900 cursor-pointer">
+
+                <Image
+                src={(course?.bannerImage).trimEnd()}
+                width={400}
+                height={400}
                 alt={course?.title}
-                className="w-full h-[200px] object-cover rounded-t-xl"/>
+                loading="eager"
+                priority
+                className="w-full h-[200px] object-cover rounded-t-xl"
+                />
 
                 <div className="font-game p-4">
 
@@ -53,6 +79,7 @@ function CourseList() {
                 </div>
 
             </div>
+            </Link>
         ))}
     </div>
   )

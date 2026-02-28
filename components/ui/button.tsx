@@ -26,14 +26,22 @@ const buttonVariants = cva(
     link:
       "text-primary underline-offset-4 hover:underline",
 
-pixel:
-  "rounded-sm inline-flex items-center justify-center \
-   h-auto px-4  \
-   bg-[#f8c800] text-black border-black border-1 \
-   shadow-[0_4px_0_0_#b89000,0_6px_0_0_#000] \
-   hover:bg-[#ffd428]\
-   active:translate-y-[4px] active:shadow-none \
-   transition-all duration-75 font-bold",
+    pixel:
+      "rounded-sm inline-flex items-center justify-center \
+      h-auto px-4  \
+      bg-[#f8c800] text-black border-black border-[1.65px] \
+      shadow-[0_4px_0_0_#b89000,0_6px_0_0_#000] \
+      hover:bg-[#ffd428]\
+      active:translate-y-[4px] active:shadow-none \
+      transition-all duration-75 font-bold",
+
+    pixelDisabled:
+      "rounded-sm inline-flex items-center justify-center \
+      h-auto px-4 \
+      bg-slate-400 text-slate-700 border-[1.65px] border-slate-950 \
+      shadow-[0_4px_0_0_#4c4f56,0_6px_0_0_#010101] \
+      cursor-not-allowed  font-bold"
+
   },
   size: {
     default: "h-9 px-4 py-2",
