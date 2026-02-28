@@ -35,6 +35,7 @@ function CourseDetail() {
       <CourseDetailBanner 
         loading={loading}
         courseDetail={courseDetail}
+        refreshData={()=>GetCourseDetail()}
       />
       <div className='grid grid-cols-3 p-10 md:px-24 lg:p-36 gap-7'>
 
