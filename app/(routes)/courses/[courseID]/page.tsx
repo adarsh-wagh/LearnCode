@@ -51,6 +51,7 @@ function CourseDetail() {
           <CourseStatus courseDetail={courseDetail}/>
           <UpgradeToPro/>
           <CommunityHelpSection/>
+          
 
         </div>
 

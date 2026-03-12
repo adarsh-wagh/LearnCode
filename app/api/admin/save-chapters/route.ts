@@ -170,7 +170,7 @@ export async function GET(req: NextRequest) {
             desc: item?.desc,
             exercises: item.exercises,
             name: item?.name,
-            chapterID: item?.id
+            chapterId: item?.id
         })
     })
     return NextResponse.json('Success')

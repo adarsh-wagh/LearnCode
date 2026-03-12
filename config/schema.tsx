@@ -6,8 +6,7 @@ export const usersTable = pgTable("users", {
   email: varchar({ length: 255 }).notNull().unique(),
   points: integer().default(0),
   subscription: varchar(),
-});
-
+})
 
 export const CourseTable=pgTable("courses",{
 
@@ -20,17 +19,15 @@ export const CourseTable=pgTable("courses",{
   tags: varchar(),
 })
 
-
 export const CourseChaptersTable=pgTable('courseChapters',{
 
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  chapterID: integer(),
+  chapterId: integer(),
   courseID: integer().notNull(),
   name: varchar(),
   desc: varchar(),
   exercises: json(),
 })
-
 
 export const EnrollCourseTable=pgTable('enrollCourse',{
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -38,4 +35,21 @@ export const EnrollCourseTable=pgTable('enrollCourse',{
   userId:varchar(),
   enrolledDate:timestamp().defaultNow(),
   xpEarned:integer(),
+})
+
+export const CompletedExerciseTable=pgTable('completedExercise',{
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  courseID:integer(),
+  chapterId: integer(),
+  exerciseId: integer(),
+  userId: varchar(),
+})
+
+export const ExerciseTable=pgTable('exercise',{
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  courseID:integer(),
+  chapterId: integer(),
+  exerciseId: varchar(),
+  exerciseContent: json(),
+  exerciseName: varchar(),
 })
