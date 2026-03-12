@@ -10,7 +10,7 @@ type Props={
 function CourseStatus({courseDetail}:Props) {
 
     const [counts, setCounts]=useState<{
-        totalExe:number,
+        totalExce:number,
         totalXp:number,
     }>()
 
@@ -29,7 +29,7 @@ function CourseStatus({courseDetail}:Props) {
         })
 
         setCounts({
-            totalExe:totalExercises,
+            totalExce:totalExercises,
             totalXp:totalXp,
         })
     }
@@ -50,8 +50,9 @@ function CourseStatus({courseDetail}:Props) {
             <Image src={'/book.png'} alt='book' width={50} height={50}/>
             <div className='w-full'>
                 <h2 className='flex justify-between text-2xl'>Exercises
-                    <span className='text-slate-400'>1/{counts?.totalExe}</span></h2>
-                <Progress value={37} className='mt-2'/>
+                    <span className='text-slate-400'>{courseDetail?.completedExercises?.length}/{counts?.totalExce}</span></h2>
+                    {/* @ts-ignore */}
+                <Progress value={UpdateProgress(courseDetail?.completedExercises?.length, counts?.totalExce)} className='mt-2'/>
             </div>
         </div>
 

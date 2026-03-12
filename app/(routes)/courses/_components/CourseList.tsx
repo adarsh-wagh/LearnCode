@@ -16,7 +16,13 @@ export type Course={
     chapters?:Chapter[],
     userEnrolled?:boolean,
     courseEnrolledInfo?: CourseEnrolledInfo,
+    completedExercises?:CompletedExercises[],
+}
 
+export type CompletedExercises={
+    chapterId:number,
+    courseID:number,
+    exerciseId:number,
 }
 
 export type CourseEnrolledInfo={

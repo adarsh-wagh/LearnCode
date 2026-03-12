@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/navigation-menu"
 import Link from 'next/link'
 import { UserButton, useUser } from '@clerk/nextjs'
+import { useParams, usePathname } from 'next/navigation';
 
 const courses = [
   {
@@ -72,6 +73,8 @@ path: '/course/9/detail'
 function Header() {
 
   const {user}=useUser();
+  const path=usePathname();
+  const {exerciseslug}=useParams();
 
   return (
     <div className='!p-4 max-w-7xl flex justify-between items-center w-full'>
@@ -80,7 +83,7 @@ function Header() {
             <h2 className='font-bold !text-3xl font-game'>LearnCode</h2>
         </div>
         {/* navbar */}
-        <NavigationMenu>
+        {!exerciseslug?<NavigationMenu>
   <NavigationMenuList className='gap-8'>
     <NavigationMenuItem>
         
@@ -117,7 +120,9 @@ function Header() {
     </NavigationMenuItem>
 
   </NavigationMenuList>
-</NavigationMenu>
+</NavigationMenu> :
+<h2 className='text-2xl font-game'>{exerciseslug?.toString()?.replaceAll("-",' ').toLocaleUpperCase()}</h2>
+}
 
         {/* signup button */}
 

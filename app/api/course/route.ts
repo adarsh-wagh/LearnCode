@@ -1,45 +1,77 @@
 import { db } from "@/config/db";
-import { CourseChaptersTable, CourseTable, EnrollCourseTable } from "@/config/schema";
+import {
+  CompletedExerciseTable,
+  CourseChaptersTable,
+  CourseTable,
+  EnrollCourseTable
+} from "@/config/schema";
 import { currentUser } from "@clerk/nextjs/server";
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq, asc } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
 
   const { searchParams } = new URL(req.url);
   const courseID = searchParams.get("courseID");
-  const user=await currentUser();
+
+  const user = await currentUser();
+  const userEmail = user?.primaryEmailAddress?.emailAddress;
+
   if (courseID) {
 
-    const result = await db
+    const numericCourseID = Number(courseID);
+
+    const courseResult = await db
       .select()
       .from(CourseTable)
-      .where(eq(CourseTable.courseID, Number(courseID)));
+      .where(eq(CourseTable.courseID, numericCourseID));
 
     const chapterResult = await db
       .select()
       .from(CourseChaptersTable)
-      //@ts-ignore
-      .where(eq(CourseChaptersTable.courseID,courseID)); 
+      .where(eq(CourseChaptersTable.courseID, numericCourseID))
+      .orderBy(asc(CourseChaptersTable.chapterId)); // FIXED ORDER
 
-      const enrollCourse=await db.select().from(EnrollCourseTable)
-      //@ts-ignore
-      .where(and(eq(EnrollCourseTable?.courseID,courseID),eq(EnrollCourseTable.userId,user?.primaryEmailAddress?.emailAddress)))
+    const enrollCourse = await db
+      .select()
+      .from(EnrollCourseTable)
+      .where(
+        and(
+          //@ts-ignore
+          eq(EnrollCourseTable.courseID, numericCourseID),eq(EnrollCourseTable.userId, userEmail)
+        )
+      );
 
-    const isEnrolledCourse=enrollCourse?.length>0?true:false
+    const isEnrolledCourse = enrollCourse.length > 0;
+
+    const completedExercises = await db
+      .select()
+      .from(CompletedExerciseTable)
+      .where(
+        and(
+          eq(CompletedExerciseTable.courseID, numericCourseID),
+          //@ts-ignore
+          eq(CompletedExerciseTable.userId, userEmail)
+        )
+      )
+      .orderBy(
+        desc(CompletedExerciseTable.courseID),
+        desc(CompletedExerciseTable.exerciseId)
+      );
 
     return NextResponse.json({
-
-      ...result[0],
+      ...courseResult[0],
       chapters: chapterResult,
-      userEnrolled:isEnrolledCourse,
+      userEnrolled: isEnrolledCourse,
       courseEnrolledInfo: enrollCourse[0],
+      completedExercises: completedExercises
     });
 
   } else {
 
-    const result = await db.select().from(CourseTable);
-    return NextResponse.json(result);
+    const courses = await db.select().from(CourseTable);
+
+    return NextResponse.json(courses);
 
   }
 }
