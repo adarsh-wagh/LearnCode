@@ -8,7 +8,7 @@ import UpgradeToPro from './_components/UpgradeToPro'
 
 function Dashboard() {
   return (
-    <div className='p-10 md:px-20 lg:px-36 xl:px-48'>Dashboard
+    <div className='p-10 md:px-20 lg:px-36 xl:px-48'>
         <div className='grid grid-cols-3 gap-7'>
 
             <div className='col-span-2'>

@@ -35,8 +35,11 @@ function ExploreMore() {
          <div className='grid grid-cols-2 gap-5 '>
             {ExplorMoreOptions.map((option,index)=>(
                 <div key={index} className='flex gap-2 p-2 border rounded-xl bg-slate-900'>
+                    <div className='flex items-center'>
                     <Image src={option?.icon} alt={option.title}
                     width={80} height={80} />
+                    </div>
+
                     <div>
                         <h2 className='font_medium text-2xl font-game'>{option?.title}</h2>
                         <p className='font-game text-slate-400'>{option?.desc}</p>

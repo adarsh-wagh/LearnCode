@@ -1,7 +1,8 @@
 "use client";
-import { Button } from '@/components/ui/button'
-import Image from 'next/image'
-import React from 'react'
+
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -9,135 +10,115 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu"
-import Link from 'next/link'
-import { UserButton, useUser } from '@clerk/nextjs'
-import { useParams, usePathname } from 'next/navigation';
-
-const courses = [
-  {
-id: 1,
-name: 'HTML', 
-desc: 'Learn the fundamentals of HTML and build the structure of modern web pages.',
-path: '/course/1/detail'
-  },
-  {
-id: 2, 
-name: 'CSS',
-desc: 'Master CSS to style and design responsive, visually appealing web layouts.',
-path: '/course/2/detail'
-  },
-  {
-id: 3,
-name: 'React',
-desc: 'Build dynamic and interactive web applications using the React JavaScript library.',
-path: '/course/3/detail'
-  },
-  {
-id: 4,
-name: 'React Advanced',
-desc: 'Deep dive into advanced React concepts including hooks, state management, performance optimization, and architectural patterns.',
-path: '/course/4/detail'
- },
-  {
-id: 5,
-name: 'Python',
-desc: 'Learn Python programming from basics to intermediate level, covering logic building, functions, and real-world applications.', 
-path: '/course/5/detail'
- },
-  {
-id: 6,
-name: 'Python Advanced',
-desc: 'Master advanced Python concepts such as O0P, modules, APIs, data processing, and automation.',
-path: '/course/6/detail'
- },
-  {
-id: 7,
-name: 'Generative AI',
-desc: 'Explore prompt engineering, LLMs, embeddings, image generation, and build GenAI-powered applications.',
-path: '/course/7/detail'
- },
-  {
-id: 8,
-name: 'Machine Learning',
-desc: 'Understand ML concepts, algorithms, data preprocessing, model training, evaluation, and deployment.',
-path: '/course/8/detail' 
- },
-  {
-id: 9,
-name: 'JavaScript',
-desc: 'Learn core JavaScript concepts, asynchronous programming, DOM manipulation, and modern ES6+ features.',
-path: '/course/9/detail'
-}];
+} from "@/components/ui/navigation-menu";
+import Link from "next/link";
+import { UserButton, useUser } from "@clerk/nextjs";
+import { useParams } from "next/navigation";
+import axios from "axios";
+import { Course } from "../(routes)/courses/_components/CourseList";
 
 function Header() {
+  const { user } = useUser();
+  const { exerciseslug } = useParams();
 
-  const {user}=useUser();
-  const path=usePathname();
-  const {exerciseslug}=useParams();
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    GetCourses();
+  }, []);
+
+  const GetCourses = async () => {
+  try {
+    const result = await axios.get("/api/course");
+
+    const data = Array.isArray(result.data)
+      ? result.data
+      : result.data?.courses || [];
+
+    setCourses(data);
+  } catch (error) {
+    console.error(error);
+    setCourses([]);
+  }
+};
+
+  if (!mounted) return null;
 
   return (
-    <div className='!p-4 max-w-7xl flex justify-between items-center w-full'>
-        <div  className='flex gap-2 items-center'>
-            <Image  src={'/logo.png'} alt='logo' width={40} height={40}/>
-            <h2 className='font-bold !text-3xl font-game'>LearnCode</h2>
-        </div>
-        {/* navbar */}
-        {!exerciseslug?<NavigationMenu>
-  <NavigationMenuList className='gap-8'>
-    <NavigationMenuItem>
-        
-      <NavigationMenuTrigger>Courses</NavigationMenuTrigger>
-      <NavigationMenuContent>
-        <ul className=' grid md:grid-cols-2 gap-2 sm:w[400px] 
-        md:w-[500px] lg:w-[600px]'>
-          {courses.map((courses,index)=>(
-            <div key={index} className='!p-2 hover:bg-accent rounded-xl cursor-pointer'>
-              <h2 className='font-medium'>{courses.name}</h2>
-              <p className='text-sm text-gray-500'>{courses.desc}</p>
-            </div>
-          ))}
-        </ul>
-      </NavigationMenuContent>
-    </NavigationMenuItem>
-
-    <NavigationMenuItem>
-         <NavigationMenuLink asChild>
-        <Link href="/projects">Projects</Link>
-        </NavigationMenuLink>
-    </NavigationMenuItem>
-
-    <NavigationMenuItem>
-        <NavigationMenuLink asChild>
-        <Link href="/pricing">Pricing</Link>
-        </NavigationMenuLink>
-    </NavigationMenuItem>
-
-    <NavigationMenuItem>
-        <NavigationMenuLink asChild>
-        <Link href="/contact">Contact Us</Link>
-        </NavigationMenuLink>
-    </NavigationMenuItem>
-
-  </NavigationMenuList>
-</NavigationMenu> :
-<h2 className='text-2xl font-game'>{exerciseslug?.toString()?.replaceAll("-",' ').toLocaleUpperCase()}</h2>
-}
-
-        {/* signup button */}
-
-      {!user? 
+    <div className="p-4 max-w-7xl flex justify-between items-center w-full">
       
-      <Link href={'/sign-in'}>
-        <Button className='font-game !text-2xl'  variant={'pixel'}>Signup</Button>
-     </Link>
-    
-    :<div className='flex gap-4 items-center'>
-      <Button className='font-game !text-2xl'  variant={'pixel'}>Dashboard</Button>
-      <UserButton/>
-      </div>}
+     <Link  href={'/'}> 
+      <div className="flex gap-2 items-center">
+        <Image src="/logo.png" alt="logo" width={40} height={40} />
+        <h2 className="font-bold text-3xl font-game">LearnCode</h2>
+      </div>
+      </Link>
+
+      {!exerciseslug ? (
+        <NavigationMenu>
+          <NavigationMenuList className="gap-8">
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Courses</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="grid md:grid-cols-2 gap-2 sm:w-[400px] md:w-[500px] lg:w-[600px]">
+                {Array.isArray(courses) &&
+                  courses.map((course, index) => (
+                    <Link key={index} href={"/courses/" + course?.courseID}>
+                      <div className="p-2 hover:bg-accent rounded-xl cursor-pointer">
+                        <h2 className="font-medium">{course?.title}</h2>
+                        <p className="text-sm text-gray-500">{course?.desc}</p>
+                      </div>
+                    </Link>
+                  ))}
+              </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link href="/projects">Projects</Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link href="/pricing">Pricing</Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link href="/contact">Contact Us</Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      ) : (
+        <h2 className="text-2xl font-game">
+          {exerciseslug?.toString()?.replaceAll("-", " ").toUpperCase()}
+        </h2>
+      )}
+
+      {!user ? (
+        <Link href="/sign-in">
+          <Button className="font-game !text-2xl" variant="pixel">
+            Signup
+          </Button>
+        </Link>
+      ) : (
+        <div className="flex gap-4 items-center">
+          <Link href="/dashboard">
+            <Button className="font-game !text-2xl" variant="pixel">
+              Dashboard
+            </Button>
+          </Link>
+          <UserButton />
+        </div>
+      )}
     </div>
-  )
+  );
 }
 
-export default Header
+export default Header;

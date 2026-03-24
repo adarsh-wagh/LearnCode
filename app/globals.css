@@ -118,6 +118,23 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+.prose code {
+  background: #1d293d;
+  color: #22d3ee;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+.prose p {
+  margin-bottom: 14px;
+}
+
+.prose code::before,
+.prose code::after {
+  content: "";
+}
+
 
 @layer base {
   body {

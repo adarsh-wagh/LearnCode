@@ -14,13 +14,20 @@ function ContentSection({courseExerciseData, loading}: Props) {
   const ContentInfo=courseExerciseData?.exerciseData;
   
   return (
-    <div className='p-10 '>
+    <div className='p-10 mb-28'>
         {loading || !ContentInfo ?
         <Skeleton className='h-full w-full m-10 rounded-2xl'/>
         :
-        <div className='font-game'>
-          <h2 className='text-3xl my-3'>{courseExerciseData?.exerciseData?.exerciseName}</h2>
-          <div dangerouslySetInnerHTML={{__html: ContentInfo?.exerciseContent?.content}}/>
+        <div>
+          <h2 className='text-4xl my-3'>{courseExerciseData?.exerciseData?.exerciseName}</h2>
+          <div className="prose prose-invert max-w-none leading-relaxed"
+            dangerouslySetInnerHTML={{
+              __html:
+                ContentInfo?.exerciseContent?.content
+                  ?.replace(/<body[^>]*>/, "")
+                  ?.replace(/<\/body>/, "") || ""
+            }}
+          />
         
           <div>
             <h2 className='text-3xl mt-4'>Task</h2>
