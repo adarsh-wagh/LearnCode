@@ -115,43 +115,41 @@ chapterIndex: number, exerciseIndex: number, length: number  )=>{
 
                       </div>
 
-                      {EnableExercise(index,indexExc, chapter?.exercises?.length) ?
+                    {
+                      isExerciseCompleted(chapter?.chapterId, indexExc + 1) ? (
 
-                        <Link href={'/courses/'+courseDetail?.courseID+'/'+chapter?.chapterId+'/'+exc?.slug}>
-                          <Button variant={'pixel'} className='text-xl'>
+                       <Button
+                          variant="pixel"
+                          className="text-xl bg-green-600"
+                          disabled
+                        >
+                          Completed
+                        </Button>
+                        ) : courseDetail?.userEnrolled ? (
+                        <Link
+                          href={`/courses/${courseDetail?.courseID}/${chapter?.chapterId}/${exc?.slug}`}
+                        >
+                          <Button variant="pixel" className="text-xl">
                             {exc?.xp} xp
                           </Button>
                         </Link>
+                      ) : (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="pixelDisabled" className="text-xl">
+                              ???
+                            </Button>
+                          </TooltipTrigger>
 
-                      :
+                          <TooltipContent>
+                            <p className="font-game text-lg">
+                              Please Enroll First
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
 
-                      isExerciseCompleted(chapter?.chapterId,indexExc+1) ?
-
-                        <Button variant={'pixel'} className='text-xl bg-green-600'>
-                          Completed
-                        </Button>
-
-                      :
-
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button variant={'pixelDisabled'} className='text-xl'>
-                                ???
-                              </Button>
-                            </TooltipTrigger>
-
-                            <TooltipContent>
-                              <p className='font-game text-lg'>
-                                Please Enroll First
-                              </p>
-                            </TooltipContent>
-
-                          </Tooltip>
-                        </TooltipProvider>
-
-                      }
-
+                      )
+                    }
                     </div>
 
                   ))}
