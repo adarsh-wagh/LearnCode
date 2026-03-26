@@ -2,6 +2,10 @@ import { db } from "@/config/db"
 import { CourseChaptersTable } from "@/config/schema"
 import { NextRequest, NextResponse } from "next/server"
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
+export async function GET(req: NextRequest) {
 const DATA =
 [
   {
@@ -162,16 +166,24 @@ const DATA =
   }
 ]
 
+  if (!db) {
+    return NextResponse.json("DB not initialized", { status: 500 });
+  }
 
-export async function GET(req: NextRequest) {
-    DATA.forEach(async (item) => {
-        await db.insert(CourseChaptersTable).values({
-            courseID: 2, //Change Course ID depends on course info,
-            desc: item?.desc,
-            exercises: item.exercises,
-            name: item?.name,
-            chapterId: item?.id
-        })
-    })
-    return NextResponse.json('Success')
+  try {
+    for (const item of DATA) {
+      await db.insert(CourseChaptersTable).values({
+        courseID: 2,
+        desc: item?.desc,
+        exercises: item.exercises,
+        name: item?.name,
+        chapterId: item?.id
+      });
+    }
+
+    return NextResponse.json("Success");
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json("Error inserting chapters", { status: 500 });
+  }
 }
