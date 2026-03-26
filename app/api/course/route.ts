@@ -13,7 +13,6 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
-
   if (!db) {
     return NextResponse.json("DB not initialized", { status: 500 });
   }
@@ -31,7 +30,6 @@ export async function GET(req: NextRequest) {
 
     // 🔹 SINGLE COURSE
     if (courseID && courseID !== "enrolled") {
-
       const result = await db
         .select()
         .from(CourseTable)
@@ -83,7 +81,6 @@ export async function GET(req: NextRequest) {
 
     // 🔹 ENROLLED COURSES
     if (courseID === "enrolled") {
-
       const enrollCourses = await db
         .select()
         .from(EnrollCourseTable)
@@ -93,7 +90,9 @@ export async function GET(req: NextRequest) {
         return NextResponse.json([]);
       }
 
-      const courseIDs = enrollCourses.map((c) => c.courseID);
+      type Enroll = typeof enrollCourses[number];
+
+      const courseIDs = enrollCourses.map((c: Enroll) => c.courseID);
 
       const courses = await db
         .select()
@@ -121,25 +120,32 @@ export async function GET(req: NextRequest) {
           desc(CompletedExerciseTable.exerciseId)
         );
 
-      const formattedResult = courses.map((course) => {
+      type Course = typeof courses[number];
+      type Chapter = typeof chapters[number];
+      type Completed = typeof completed[number];
+
+      const formattedResult = courses.map((course: Course) => {
         const courseEnrollInfo = enrollCourses.find(
-          (e) => e.courseID === course.courseID
+          (e: Enroll) => e.courseID === course.courseID
         );
 
         const courseChapters = chapters.filter(
-          (ch) => ch.courseID === course.courseID
+          (ch: Chapter) => ch.courseID === course.courseID
         );
 
         const courseCompleted = completed.filter(
-          (cx) => cx.courseID === course.courseID
+          (cx: Completed) => cx.courseID === course.courseID
         );
 
-        const totalExercises = courseChapters.reduce((acc, chapter) => {
-          const count = Array.isArray(chapter.exercises)
-            ? chapter.exercises.length
-            : 0;
-          return acc + count;
-        }, 0);
+        const totalExercises = courseChapters.reduce(
+          (acc: number, chapter: Chapter) => {
+            const count = Array.isArray(chapter.exercises)
+              ? chapter.exercises.length
+              : 0;
+            return acc + count;
+          },
+          0
+        );
 
         return {
           courseID: course.courseID,
@@ -158,7 +164,6 @@ export async function GET(req: NextRequest) {
     // 🔹 ALL COURSES
     const courses = await db.select().from(CourseTable);
     return NextResponse.json(courses);
-
   } catch (e) {
     console.error(e);
     return NextResponse.json("Error fetching course", { status: 500 });
