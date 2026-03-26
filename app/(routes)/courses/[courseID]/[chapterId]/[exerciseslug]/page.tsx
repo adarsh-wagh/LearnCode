@@ -2,8 +2,6 @@
 import axios from 'axios';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import SplitterLayout from 'react-splitter-layout';
-import 'react-splitter-layout/lib/index.css';
 import { CompletedExercises, exercises } from '../../../_components/CourseList';
 import ContentSection from './_components/ContentSection';
 import CodeEditor from './_components/CodeEditor';
@@ -60,78 +58,65 @@ const GetExerciseCourseDetail = async () => {
     exerciseId: exerciseslug
   })
 
-  console.log(result.data);
   setCourseExerciseData(result.data);
   setLoading(false);
 }
 
 useEffect(() => { 
   document.body.style.overflow = 'hidden';
-
-  return () => {
-    document.body.style.overflow = '';
-  }
+  return () => { document.body.style.overflow = ''; }
 },[])
 
 useEffect(() => {
   if(courseExerciseData){
-    GetExerciseDetail();
-    GetPrevNextButtonRoute();
+    const exerciseInfo = courseExerciseData.exercises?.find(
+      (item) => item.slug == exerciseslug
+    );
+    setExerciseInfo(exerciseInfo);
+
+    const currentIndex =
+      courseExerciseData.exercises?.findIndex(
+        item => item.slug == exerciseslug
+      ) ?? -1;
+
+    if(currentIndex !== -1){
+      const next = courseExerciseData.exercises[currentIndex + 1]?.slug;
+      const prev = courseExerciseData.exercises[currentIndex - 1]?.slug;
+
+      setNextButtonRoute(
+        next ? `/courses/${courseID}/${chapterId}/${next}` : undefined
+      );
+
+      setPrevButtonRoute(
+        prev ? `/courses/${courseID}/${chapterId}/${prev}` : undefined
+      );
+    }
   }
 }, [courseExerciseData])
 
-const GetExerciseDetail = () =>{
-  const exerciseInfo = courseExerciseData?.exercises?.find(
-    (item) => item.slug == exerciseslug
-  );
-  setExerciseInfo(exerciseInfo);
-}
-
-const GetPrevNextButtonRoute = () => {
-
-  const currentExerciseIndex =
-    courseExerciseData?.exercises?.findIndex(
-      item => item.slug == exerciseslug
-    ) ?? -1;
-
-  if(currentExerciseIndex === -1) return;
-
-  const NextExercise =
-    courseExerciseData?.exercises[currentExerciseIndex + 1]?.slug;
-
-  const PrevExercise =
-    courseExerciseData?.exercises[currentExerciseIndex - 1]?.slug;
-
-  setNextButtonRoute(
-    NextExercise
-      ? `/courses/${courseID}/${chapterId}/${NextExercise}`
-      : undefined
-  );
-
-  setPrevButtonRoute(
-    PrevExercise
-      ? `/courses/${courseID}/${chapterId}/${PrevExercise}`
-      : undefined
-  );
-}
-
 return (
 <div className='border-t-4'>
-      <SplitterLayout percentage 
-      primaryMinSize={40} 
-      secondaryMinSize={60}>
-        
-  <div>
-    <ContentSection courseExerciseData={courseExerciseData} 
-      loading={loading}/>
+
+  <div className="flex h-[calc(100vh-80px)] overflow-hidden">
+
+    {/* LEFT PANEL */}
+    <div className="basis-1/3 shrink-0 overflow-auto border-r-2 border-slate-700">
+      <ContentSection 
+        courseExerciseData={courseExerciseData} 
+        loading={loading}
+      />
+    </div>
+
+    {/* RIGHT PANEL */}
+   <div className="basis-2/3 flex overflow-hidden">
+      <CodeEditor 
+        courseExerciseData={courseExerciseData} 
+      />
+    </div>
+
   </div>
-  
-  <div>
-      <CodeEditor courseExerciseData={courseExerciseData} 
-      loading={loading}/>
-  </div>
-      </SplitterLayout>
       
+  {/* FOOTER */}
   <div className="font-game fixed bottom-0 w-full border-t-4 bg-slate-950 flex p-4 justify-between items-center">
      
       <Link href={PrevButtonRoute ?? `/courses/${courseID}`}>
@@ -140,7 +125,12 @@ return (
 
     <div className='flex gap-2 items-center text-2xl'>
         <Image src="/star.png" alt="star" width={40} height={40} />
-        <h2>You can earn <span className='text-yellow-400 text-3xl'>{exerciseInfo?.xp}</span> Xp</h2>
+        <h2>
+          You can earn 
+          <span className='text-yellow-400 text-3xl'>
+            {exerciseInfo?.xp}
+          </span> Xp
+        </h2>
     </div>
 
         <Link href={NextButtonRoute ?? `/courses/${courseID}`}>
