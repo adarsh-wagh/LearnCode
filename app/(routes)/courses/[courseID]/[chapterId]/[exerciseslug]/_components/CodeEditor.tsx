@@ -1,13 +1,11 @@
 'use client'
 import {
   SandpackProvider,
-  SandpackLayout,
   SandpackCodeEditor,
   SandpackPreview,
   useSandpack,
 } from "@codesandbox/sandpack-react";
-import React, { useState } from 'react'
-import SplitterLayout from 'react-splitter-layout';
+import React, { useState, useRef, useEffect } from 'react';
 import { CourseExercise } from "../page";
 import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
@@ -48,7 +46,6 @@ const sandpackTheme = {
 
 type Props = {
   courseExerciseData: CourseExercise | undefined,
-  loading: boolean
 }
 
 const CodeEditorChildren = ({ onCompleteExercise, IsCompleted }: any) => {
@@ -78,10 +75,13 @@ const CodeEditorChildren = ({ onCompleteExercise, IsCompleted }: any) => {
   )
 }
 
-function CodeEditor({ courseExerciseData, loading }: Props) {
+function CodeEditor({ courseExerciseData }: Props) {
 
   const { exerciseslug } = useParams();
   const [completed, setCompleted] = useState(false);
+
+  const [leftWidth, setLeftWidth] = useState(50);
+  const isDragging = useRef(false);
 
   const exerciseIndex =
     courseExerciseData?.exercises?.findIndex(item => item.slug == exerciseslug);
@@ -94,30 +94,53 @@ function CodeEditor({ courseExerciseData, loading }: Props) {
   const IsCompleted = completed || alreadyCompleted;
 
   const onCompleteExercise = async () => {
-
     if (exerciseIndex == undefined) return;
 
-    const result = await axios.post('/api/exercise/complete', {
+    await axios.post('/api/exercise/complete', {
       courseID: courseExerciseData?.courseID,
       chapterId: courseExerciseData?.chapterId,
       exerciseId: exerciseIndex + 1,
       xpEarned: courseExerciseData?.exercises[exerciseIndex].xp,
     });
 
-    console.log(result);
-
-    setCompleted(true); // update UI immediately
-
+    setCompleted(true);
     toast.success('Exercise completed!');
   };
 
+  // DRAG
+  const handleMouseDown = () => (isDragging.current = true);
+  const handleMouseUp = () => (isDragging.current = false);
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isDragging.current) return;
+
+    const container = document.getElementById("editor-container");
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    const percent = ((e.clientX - rect.left) / rect.width) * 100;
+
+    if (percent > 20 && percent < 80) {
+      setLeftWidth(percent);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
+
   return (
-    <div>
+    <div className="h-full w-full min-w-0">
 
       <SandpackProvider
         template="static"
         theme={sandpackTheme}
-        style={{ height: '100vh' }}
+        style={{ height: '100%' }}
         files={courseExerciseData?.exerciseData?.exerciseContent?.starterCode}
         options={{
           autorun: false,
@@ -125,40 +148,52 @@ function CodeEditor({ courseExerciseData, loading }: Props) {
         }}
       >
 
-        <SandpackLayout style={{ height: '100%' }}>
+        {/* 🚀 REMOVED SandpackLayout (fixes gap) */}
 
-          <SplitterLayout
-            percentage
-            primaryMinSize={30}
-            secondaryMinSize={30}
-            secondaryInitialSize={50}
+        <div
+          id="editor-container"
+          className="flex h-full w-full overflow-hidden min-w-0"
+        >
+
+          {/* EDITOR */}
+          <div
+            style={{ flexBasis: `${leftWidth}%` }}
+            className="min-w-0 overflow-auto border-r-2 border-slate-700 relative"
           >
+            <SandpackCodeEditor
+              showRunButton={false}
+              showLineNumbers
+              showTabs
+              style={{ height: '100%', width: '100%' }}
+            />
 
-            <div className="relative h-full">
-              <SandpackCodeEditor
-                showRunButton={false}
-                showLineNumbers
-                showTabs
-                style={{ height: '100%' }}
-              />
+            <CodeEditorChildren
+              onCompleteExercise={onCompleteExercise}
+              IsCompleted={IsCompleted}
+            />
+          </div>
 
-              <CodeEditorChildren
-                onCompleteExercise={onCompleteExercise}
-                IsCompleted={IsCompleted}
-              />
-            </div>
+          {/* HANDLE */}
+          <div
+            onMouseDown={handleMouseDown}
+            className="w-2 cursor-col-resize bg-slate-700 hover:bg-slate-500"
+          />
 
+          {/* PREVIEW */}
+          <div
+            style={{ flexBasis: `${100 - leftWidth}%` }}
+            className="min-w-0 overflow-auto flex"
+          >
             <SandpackPreview
               showOpenNewtab
               showNavigator
               showOpenInCodeSandbox={false}
               showRefreshButton={false}
-              style={{ height: '100%' }}
+              style={{ height: '100%', width: '100%' }}
             />
+          </div>
 
-          </SplitterLayout>
-
-        </SandpackLayout>
+        </div>
 
       </SandpackProvider>
 
@@ -166,4 +201,4 @@ function CodeEditor({ courseExerciseData, loading }: Props) {
   )
 }
 
-export default CodeEditor
+export default CodeEditor;

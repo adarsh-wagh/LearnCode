@@ -42,27 +42,27 @@ export default function RootLayout({
 }>) {
   return (
     
- <ClerkProvider>
-    <html lang="en" suppressHydrationWarning className="dark">
-      <body
+<ClerkProvider>
+  <html lang="en" suppressHydrationWarning className="dark">
+    <body
       suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable}
-        ${Gamefont.variable} ${inter.variable}
-        antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable}
+      ${Gamefont.variable} ${inter.variable}
+      antialiased`}
               >
-        <Provider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
+      <Provider
+        attribute="class"
+        defaultTheme="dark"
+        enableSystem
+        disableTransitionOnChange
+      >
           <TooltipProvider>
             {children}
           </TooltipProvider>
-          <Toaster/>
-        </Provider>
-      </body>
-    </html> 
-    </ClerkProvider>
+        <Toaster/>
+      </Provider>
+    </body>
+  </html> 
+</ClerkProvider>
   );
 }
