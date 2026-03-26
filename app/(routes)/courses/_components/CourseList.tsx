@@ -3,7 +3,7 @@ import axios from "axios";
 import { ChartNoAxesColumnIncreasingIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
 export type Course = {
   id: number,
